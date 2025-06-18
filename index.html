@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>论文成果展示</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- 标题区 -->
+        <header class="header">
+            <h1 class="title">深度学习在计算机视觉中的创新应用</h1>
+            <h2 class="subtitle">基于注意力机制的图像识别新方法</h2>
+            <div class="conference">CVPR 2024</div>
+            
+            <div class="authors">
+                <a href="#" class="author">张三</a>
+                <a href="#" class="author">李四</a>
+                <a href="#" class="author">王五</a>
+                <a href="#" class="author">赵六</a>
+            </div>
+            
+            <div class="affiliations">
+                <span class="affiliation">清华大学</span>
+                <span class="affiliation">北京大学</span>
+            </div>
+            
+            <div class="links">
+                <a href="#" class="link-button arxiv">
+                    <span class="icon">📄</span>
+                    arXiv
+                </a>
+                <a href="#" class="link-button code">
+                    <span class="icon">💻</span>
+                    代码 + 数据
+                </a>
+            </div>
+        </header>
+
+        <!-- 摘要 -->
+        <section class="section">
+            <h2 class="section-title">摘要</h2>
+            <div class="abstract">
+                <p>本研究提出了一种基于注意力机制的新型图像识别方法，通过引入多尺度特征融合和自适应权重分配策略，显著提升了模型在复杂场景下的识别准确率。我们的方法在多个公开数据集上取得了最先进的性能，相比现有方法平均提升了8.5%的准确率。</p>
+                <p>该方法的核心创新在于设计了一个层次化的注意力模块，能够自动学习不同层次特征的重要性权重，并通过跨层特征交互增强模型的表征能力。实验结果表明，我们的方法在保持计算效率的同时，在图像分类、目标检测和语义分割等任务上都取得了显著的性能提升。</p>
+            </div>
+        </section>
+
+        <!-- 方法 -->
+        <section class="section">
+            <h2 class="section-title">方法概述</h2>
+            <div class="method">
+                <div class="method-diagram">
+                    <div class="diagram-placeholder">
+                        <div class="flow-step">
+                            <div class="step-box input">输入图像</div>
+                            <div class="arrow">→</div>
+                            <div class="step-box feature">特征提取</div>
+                            <div class="arrow">→</div>
+                            <div class="step-box attention">注意力模块</div>
+                            <div class="arrow">→</div>
+                            <div class="step-box fusion">特征融合</div>
+                            <div class="arrow">→</div>
+                            <div class="step-box output">分类结果</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="method-description">
+                    <h3>核心技术特点</h3>
+                    <ul>
+                        <li><strong>多尺度注意力机制：</strong>设计了层次化的注意力模块，能够捕获不同尺度的特征信息</li>
+                        <li><strong>自适应权重分配：</strong>通过学习得到的权重矩阵，动态调整不同特征通道的重要性</li>
+                        <li><strong>跨层特征交互：</strong>建立了深层和浅层特征之间的有效连接，增强特征表征能力</li>
+                        <li><strong>端到端训练：</strong>整个网络可以进行端到端的训练，优化简单高效</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 实验结果 -->
+        <section class="section">
+            <h2 class="section-title">实验结果</h2>
+            <div class="results">
+                <div class="results-table">
+                    <h3>主要数据集性能对比</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>数据集</th>
+                                <th>基线方法</th>
+                                <th>我们的方法</th>
+                                <th>提升幅度</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ImageNet</td>
+                                <td>78.2%</td>
+                                <td>86.7%</td>
+                                <td>+8.5%</td>
+                            </tr>
+                            <tr>
+                                <td>CIFAR-100</td>
+                                <td>82.1%</td>
+                                <td>89.3%</td>
+                                <td>+7.2%</td>
+                            </tr>
+                            <tr>
+                                <td>COCO</td>
+                                <td>45.6%</td>
+                                <td>52.8%</td>
+                                <td>+7.2%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="performance-highlights">
+                    <h3>性能亮点</h3>
+                    <div class="highlight-grid">
+                        <div class="highlight-item">
+                            <div class="highlight-number">8.5%</div>
+                            <div class="highlight-text">平均准确率提升</div>
+                        </div>
+                        <div class="highlight-item">
+                            <div class="highlight-number">2.3x</div>
+                            <div class="highlight-text">推理速度提升</div>
+                        </div>
+                        <div class="highlight-item">
+                            <div class="highlight-number">15%</div>
+                            <div class="highlight-text">参数量减少</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 讨论与结论 -->
+        <section class="section">
+            <h2 class="section-title">讨论与结论</h2>
+            <div class="conclusion">
+                <p>本研究提出的基于注意力机制的图像识别方法在多个方面取得了显著进展：</p>
+                <ol>
+                    <li><strong>性能提升：</strong>在多个标准数据集上都取得了最先进的性能，证明了方法的有效性</li>
+                    <li><strong>计算效率：</strong>通过优化的网络结构设计，在提升性能的同时保持了较高的计算效率</li>
+                    <li><strong>泛化能力：</strong>方法在不同类型的视觉任务上都表现出良好的泛化能力</li>
+                    <li><strong>实用价值：</strong>该方法已在实际应用中得到验证，具有重要的实用价值</li>
+                </ol>
+                
+                <h3>未来工作</h3>
+                <p>未来我们将继续探索以下方向：扩展到视频理解任务、结合多模态信息、优化模型压缩技术，以及在更多实际应用场景中验证方法的有效性。</p>
+            </div>
+        </section>
+
+        <!-- BibTeX -->
+        <section class="section">
+            <h2 class="section-title">引用</h2>
+            <div class="bibtex">
+                <pre><code>@article{zhang2024attention,
+  title={深度学习在计算机视觉中的创新应用：基于注意力机制的图像识别新方法},
+  author={张三 and 李四 and 王五 and 赵六},
+  journal={CVPR},
+  year={2024},
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>&copy; 2024 论文作者团队. 保留所有权利.</p>
+            <div class="footer-links">
+                <a href="#">联系我们</a>
+                <a href="#">相关工作</a>
+                <a href="#">更多资源</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
