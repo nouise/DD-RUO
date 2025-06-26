@@ -3,182 +3,699 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>论文成果展示</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Joint Rate-Utility Optimization for Dataset Distillation</title>
+    
+    <!-- MathJax for LaTeX formula support -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    
+    <!-- Styles -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #004080;
+            --secondary-color: #0066cc;
+            --text-color: #333333;
+            --light-text: #666666;
+            --background-color: #f9f9f9;
+            --white: #ffffff;
+            --border-color: #e0e0e0;
+            --hover-color: #f0f8ff;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+        }
+
+        /* Fixed Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: var(--transition);
+        }
+
+        .navbar.scrolled {
+            padding: 0.5rem 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            background: var(--hover-color);
+            color: var(--secondary-color);
+        }
+
+        /* Dark mode toggle */
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--secondary-color);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 6rem 2rem 2rem;
+        }
+
+        /* Paper Header */
+        .paper-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .paper-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .authors {
+            margin-bottom: 1rem;
+        }
+
+        .author {
+            display: inline-block;
+            margin: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--hover-color);
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .affiliations {
+            color: var(--light-text);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .paper-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .paper-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--secondary-color);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .paper-link:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        /* Sections */
+        .section {
+            background: var(--white);
+            margin-bottom: 2rem;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .section-content {
+            font-size: 1rem;
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        .section-content p {
+            margin-bottom: 1rem;
+        }
+
+        .section-content ul, .section-content ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        .section-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Figures */
+        .figure {
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .figure img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .figure-caption {
+            margin-top: 1rem;
+            font-style: italic;
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+
+        /* References */
+        .references {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        .reference-item {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--background-color);
+            border-radius: 6px;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .reference-item:hover {
+            background: var(--hover-color);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--primary-color);
+            color: var(--white);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .footer h3 {
+            margin-bottom: 1rem;
+        }
+
+        .footer p {
+            margin-bottom: 0.5rem;
+            opacity: 0.9;
+        }
+
+        /* GitHub Corner */
+        .github-corner {
+            position: fixed;
+            top: 0;
+            right: 0;
+            z-index: 1001;
+        }
+
+        .github-corner svg {
+            fill: var(--primary-color);
+            color: var(--white);
+            width: 80px;
+            height: 80px;
+        }
+
+        .github-corner:hover .octo-arm {
+            animation: octocat-wave 560ms ease-in-out;
+        }
+
+        @keyframes octocat-wave {
+            0%, 100% { transform: rotate(0) }
+            20%, 60% { transform: rotate(-25deg) }
+            40%, 80% { transform: rotate(10deg) }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .main-content {
+                padding: 5rem 1rem 1rem;
+            }
+
+            .paper-title {
+                font-size: 2rem;
+            }
+
+            .paper-links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Dark mode styles */
+        [data-theme="dark"] {
+            --text-color: #e0e0e0;
+            --light-text: #b0b0b0;
+            --background-color: #1a1a1a;
+            --white: #2d2d2d;
+            --border-color: #404040;
+            --hover-color: #3a3a3a;
+        }
+
+        [data-theme="dark"] .navbar {
+            background: var(--white);
+        }
+
+        [data-theme="dark"] .navbar.scrolled {
+            background: rgba(45, 45, 45, 0.95);
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <!-- 标题区 -->
-        <header class="header">
-            <h1 class="title">深度学习在计算机视觉中的创新应用</h1>
-            <h2 class="subtitle">基于注意力机制的图像识别新方法</h2>
-            <div class="conference">CVPR 2024</div>
+    <!-- Fixed Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-title">论文展示</div>
+            <ul class="nav-links">
+                <li><a href="#abstract">摘要</a></li>
+                <li><a href="#introduction">引言</a></li>
+                <li><a href="#method">方法</a></li>
+                <li><a href="#experiments">实验</a></li>
+                <li><a href="#conclusion">结论</a></li>
+                <li><a href="#references">参考文献</a></li>
+            </ul>
+            <button class="theme-toggle" id="themeToggle" title="切换主题">
+                🌙
+            </button>
+        </div>
+    </nav>
+
+    <!-- GitHub Corner -->
+    <a href="#" class="github-corner" aria-label="View source on GitHub" style="display: none;">
+        <svg viewBox="0 0 250 250" aria-hidden="true">
+            <path d="m0,0 0,250 250,0 0,-250z"></path>
+            <path d="m127.5,110c-5.5,0 -10,4.5 -10,10 0,5.5 4.5,10 10,10 5.5,0 10,-4.5 10,-10 0,-5.5 -4.5,-10 -10,-10z m67.5,10c0,5.5 -4.5,10 -10,10 -5.5,0 -10,-4.5 -10,-10 0,-5.5 4.5,-10 10,-10 5.5,0 10,4.5 10,10z" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+            <path d="m115,115 15,0 0,15 -15,0z m67.5,-5c-5.5,0 -10,4.5 -10,10 0,5.5 4.5,10 10,10 5.5,0 10,-4.5 10,-10 0,-5.5 -4.5,-10 -10,-10z" fill="currentColor" class="octo-body"></path>
+        </svg>
+    </a>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Paper Header -->
+        <header class="paper-header">
+            <h1 class="paper-title">Joint Rate-Utility Optimization for Dataset Distillation</h1>
             
             <div class="authors">
-                <a href="#" class="author">张三</a>
-                <a href="#" class="author">李四</a>
-                <a href="#" class="author">王五</a>
-                <a href="#" class="author">赵六</a>
+                <span class="author">Youneng Bao</span>
+                <span class="author">Yiping Liu</span>
+                <span class="author">Zhuo Chen</span>
+                <span class="author">Yongsheng Liang</span>
+                <span class="author">Mu Li</span>
+                <span class="author">Kede Ma</span>
             </div>
             
             <div class="affiliations">
-                <span class="affiliation">清华大学</span>
-                <span class="affiliation">北京大学</span>
+                <p><sup>1</sup>Harbin Institute of Technology, Shenzhen</p>
+                <p><sup>2</sup>Peng Cheng Laboratory</p>
+                <p><sup>3</sup>City University of Hong Kong</p>
+                <p>younebao@cityu.edu.hk, yipingliu@stu.hit.edu.cn, chenzhuo.zoom@gmail.com</p>
+                <p>{liangys,limu2022}@hit.edu.cn, kede.ma@cityu.edu.hk</p>
             </div>
             
-            <div class="links">
-                <a href="#" class="link-button arxiv">
-                    <span class="icon">📄</span>
-                    arXiv
+            <div class="paper-links">
+                <a href="#" class="paper-link">
+                    📄 arXiv
                 </a>
-                <a href="#" class="link-button code">
-                    <span class="icon">💻</span>
-                    代码 + 数据
+                <a href="#" class="paper-link">
+                    🏛️ ICCV 2025
+                </a>
+                <a href="#" class="paper-link">
+                    💻 Code
+                </a>
+                <a href="#" class="paper-link">
+                    📊 Dataset
                 </a>
             </div>
         </header>
 
-        <!-- 摘要 -->
-        <section class="section">
-            <h2 class="section-title">摘要</h2>
-            <div class="abstract">
-                <p>本研究提出了一种基于注意力机制的新型图像识别方法，通过引入多尺度特征融合和自适应权重分配策略，显著提升了模型在复杂场景下的识别准确率。我们的方法在多个公开数据集上取得了最先进的性能，相比现有方法平均提升了8.5%的准确率。</p>
-                <p>该方法的核心创新在于设计了一个层次化的注意力模块，能够自动学习不同层次特征的重要性权重，并通过跨层特征交互增强模型的表征能力。实验结果表明，我们的方法在保持计算效率的同时，在图像分类、目标检测和语义分割等任务上都取得了显著的性能提升。</p>
+        <!-- Abstract Section -->
+        <section class="section" id="abstract">
+            <h2 class="section-title">Abstract</h2>
+            <div class="section-content">
+                <p>Driven by the 'scale-is-everything' paradigm, modern machine learning increasingly demands ever-larger datasets and models, yielding prohibitive computational and storage requirements. Dataset distillation mitigates this by compressing a full dataset into a small set of synthetic samples, preserving its original utility. Yet, existing methods either optimize performance under a fixed storage budget or remove sample redundancy, without jointly balancing both objectives, thus precluding Pareto-optimal trade-offs.</p>
+                
+                <p>In this work, we propose a joint Rate-Utility Optimization (RUO) method for dataset distillation. Specifically, we parameterize synthetic samples as optimizable latent codes decoded by lightweight networks. Such a hybrid parameterization subsumes all prior explicit and implicit representations for synthetic datasets. We estimate the entropy of quantized latents as the rate measure and plug any existing distillation loss as the utility measure, trading them off via a Lagrange multiplier.</p>
+                
+                <p>To enable fair, cross-method comparisons, we introduce bits per class (bpc), a precise storage metric that accounts for sample, label, and decoder costs. On CIFAR-10, CIFAR-100, and ImageNet-128, our method achieves up to 170× greater compression than standard distillation at comparable accuracy. Across diverse bpc budgets, distillation losses, and backbone architectures, our approach consistently establishes new state-of-the-art rate-utility trade-offs.</p>
             </div>
         </section>
 
-        <!-- 方法 -->
-        <section class="section">
-            <h2 class="section-title">方法概述</h2>
-            <div class="method">
-                <div class="method-diagram">
-                    <div class="diagram-placeholder">
-                        <div class="flow-step">
-                            <div class="step-box input">输入图像</div>
-                            <div class="arrow">→</div>
-                            <div class="step-box feature">特征提取</div>
-                            <div class="arrow">→</div>
-                            <div class="step-box attention">注意力模块</div>
-                            <div class="arrow">→</div>
-                            <div class="step-box fusion">特征融合</div>
-                            <div class="arrow">→</div>
-                            <div class="step-box output">分类结果</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="method-description">
-                    <h3>核心技术特点</h3>
-                    <ul>
-                        <li><strong>多尺度注意力机制：</strong>设计了层次化的注意力模块，能够捕获不同尺度的特征信息</li>
-                        <li><strong>自适应权重分配：</strong>通过学习得到的权重矩阵，动态调整不同特征通道的重要性</li>
-                        <li><strong>跨层特征交互：</strong>建立了深层和浅层特征之间的有效连接，增强特征表征能力</li>
-                        <li><strong>端到端训练：</strong>整个网络可以进行端到端的训练，优化简单高效</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <!-- 实验结果 -->
-        <section class="section">
-            <h2 class="section-title">实验结果</h2>
-            <div class="results">
-                <div class="results-table">
-                    <h3>主要数据集性能对比</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>数据集</th>
-                                <th>基线方法</th>
-                                <th>我们的方法</th>
-                                <th>提升幅度</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>ImageNet</td>
-                                <td>78.2%</td>
-                                <td>86.7%</td>
-                                <td>+8.5%</td>
-                            </tr>
-                            <tr>
-                                <td>CIFAR-100</td>
-                                <td>82.1%</td>
-                                <td>89.3%</td>
-                                <td>+7.2%</td>
-                            </tr>
-                            <tr>
-                                <td>COCO</td>
-                                <td>45.6%</td>
-                                <td>52.8%</td>
-                                <td>+7.2%</td>
-                            </tr>
-                        </tbody>
-                    </table>
+        <!-- Introduction Section -->
+        <section class="section" id="introduction">
+            <h2 class="section-title">1. Introduction</h2>
+            <div class="section-content">
+                <p>The rapid advances in machine learning have been driven by the 'scale-is-everything' paradigm, in which ever-larger models trained on ever-more extensive datasets yield progressively better performance across various computational prediction tasks. However, this scaling trend incurs steep computational, storage, and environmental costs, posing a significant barrier to sustainable and accessible research and deployment.</p>
+                
+                <div class="figure">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjlmOWY5Ii8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzMzMzMzMyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkZpZ3VyZSAxOiBSYXRlLXV0aWxpdHkgY3VydmVzIG9mIGRpZmZlcmVudCBkYXRhc2V0IGRpc3RpbGxhdGlvbiBtZXRob2RzPC90ZXh0Pgo8L3N2Zz4K" alt="Rate-utility curves">
+                    <figcaption class="figure-caption">Figure 1. The Rate-utility curves of different dataset distillation methods on ImageNet-subset Nette. Our method achieves a better trade-off between rate and utility compared to existing methods. BPC is defined as the bits per class, directly measuring the storage cost of the distilled dataset.</figcaption>
                 </div>
                 
-                <div class="performance-highlights">
-                    <h3>性能亮点</h3>
-                    <div class="highlight-grid">
-                        <div class="highlight-item">
-                            <div class="highlight-number">8.5%</div>
-                            <div class="highlight-text">平均准确率提升</div>
-                        </div>
-                        <div class="highlight-item">
-                            <div class="highlight-number">2.3x</div>
-                            <div class="highlight-text">推理速度提升</div>
-                        </div>
-                        <div class="highlight-item">
-                            <div class="highlight-number">15%</div>
-                            <div class="highlight-text">参数量减少</div>
-                        </div>
-                    </div>
+                <p>Dataset distillation (DD) addresses these challenges by learning a compact, synthetic dataset that enables rapid model prototyping, accelerated model training, and efficient hyperparameter tuning, while lowering compute, storage, and energy requirements. At the core of DD lies a trade-off between rate (i.e., the storage footprint of the synthetic dataset) and utility (i.e., the performance of models trained on distilled data).</p>
+                
+                <p>Despite impressive progress, existing DD methods optimize rate and utility separately, precluding Pareto-optimal trade-offs. Inspired by end-to-end rate-distortion optimization of learned image compression, we describe a joint rate-utility optimization method for DD. Our approach parametrizes synthetic samples as multiscale grids of learnable latent codes, decoded by small learnable networks, which generalizes all existing explicit and implicit distilled-dataset representations.</p>
+                
+                <p><strong>Key Contributions:</strong></p>
+                <ul>
+                    <li>A joint rate-utility optimization method for DD that retains full compatibility with existing distillation losses</li>
+                    <li>A hybrid parameterization of synthetic samples that subsumes prior synthetic dataset representations</li>
+                    <li>A bpc metric for enabling standardized and fair rate-utility comparisons across various DD methods</li>
+                    <li>An experimental demonstration on CIFAR-10, CIFAR-100, and ImageNet-128 that our method consistently establishes new state-of-the-art rate-utility trade-offs</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Related Work Section -->
+        <section class="section" id="related-work">
+            <h2 class="section-title">2. Related Work</h2>
+            <div class="section-content">
+                <p>In this section, we review prior efforts in DD and data compression. Our method bridges the conceptual and computational gap between these two fields, allowing principled exploration of Pareto-optimal trade-offs between rate and utility in DD.</p>
+                
+                <h3 style="color: var(--primary-color); margin: 1.5rem 0 1rem 0;">2.1. Dataset Distillation</h3>
+                <p>Wang et al. first formulated DD as a bilevel optimization problem, which generalizes coreset selection. The reliance of BPTT over the entire inner-loop trajectory, incurring prohibitive computation, high memory usage, and unstable meta-gradients. To reduce this burden, several meta-gradient estimation strategies have been proposed.</p>
+                
+                <p>Recent efforts have been put to address the scalability of DD methods to large, high-resolution datasets, typically via the decoupling trick in bilevel optimization. Close to our work is the so-called factorized DD, which factorizes the synthetic dataset with a combination of codes and decoders, in an attempt to improve compression efficiency.</p>
+                
+                <h3 style="color: var(--primary-color); margin: 1.5rem 0 1rem 0;">2.2. Data Compression</h3>
+                <p>Data compression is broadly categorized into lossless and lossy compression paradigms. Neural compression, pioneered by recent works, employs neural networks to directly learn optimal transform strategies. Both dataset distillation and data compression fundamentally pursue minimum-entropy representations to eliminate information redundancy.</p>
+            </div>
+        </section>
+
+        <!-- Method Section -->
+        <section class="section" id="method">
+            <h2 class="section-title">3. Methodology</h2>
+            <div class="section-content">
+                <h3 style="color: var(--primary-color); margin: 1.5rem 0 1rem 0;">3.1. Problem Formulation</h3>
+                <p>Dataset distillation can be modeled as a bi-level optimization problem. Given an original dataset $T := (X_T, Y_T) = \{(x_i, y_i)\}_{i=1}^N$ consisting of $N$ data points $x_i$ and corresponding labels $y_i$, the goal of dataset distillation is to find a smaller, synthetic dataset $S := (X_S, Y_S) = \{(\tilde{x}_j, \tilde{y}_j)\}_{j=1}^M$, and $M \ll N$, such that a model trained on $S$ performs comparably to a model trained on $T$.</p>
+                
+                <p>More formally, let $f(x; \theta)$ represent a model parameterized by $\theta$. The objective of dataset distillation is formulated as follows:</p>
+                
+                <div style="text-align: center; margin: 2rem 0;">
+                    $$\min_S \mathbb{E}_{(x,y) \sim p(x,y)}[\ell(f_{\theta_S}(x), y)]$$
+                    $$\text{where } \theta_S = \arg\min_\theta \frac{1}{M} \sum_{(\tilde{x}_j, \tilde{y}_j) \in S} \ell(f_\theta(\tilde{x}_j), \tilde{y}_j)$$
+                </div>
+                
+                <h3 style="color: var(--primary-color); margin: 1.5rem 0 1rem 0;">3.2. Hybrid Parameterization Framework</h3>
+                <p>We propose a hybrid framework that combines explicit and implicit parameterization by jointly learning both the latent feature $Z$ and transformation function $F_\psi$, while storing parameters of both components. The total rate consists of explicit and implicit components:</p>
+                
+                <div style="text-align: center; margin: 2rem 0;">
+                    $$R_{total} = R_{ex} + R_{im}$$
+                </div>
+                
+                <p>where $R_{ex}$ and $R_{im}$ represent the explicit part and implicit part of the rate, respectively.</p>
+                
+                <div class="figure">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjlmOWY5Ii8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzMzMzMzMyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkZpZ3VyZSAyOiBDb21wYXJpc29uIG9mIGRhdGFzZXQgZGlzdGlsbGF0aW9uIGZyYW1ld29ya3M8L3RleHQ+Cjwvc3ZnPgo=" alt="Framework comparison">
+                    <figcaption class="figure-caption">Figure 2. Comparison of dataset distillation frameworks. (a) Explicit parameterization. (b) Implicit parameterization. (c) Our framework combines explicit and implicit parametrization and generates compact representations by directly optimizing bitrate of synthetic datasets.</figcaption>
                 </div>
             </div>
         </section>
 
-        <!-- 讨论与结论 -->
-        <section class="section">
-            <h2 class="section-title">讨论与结论</h2>
-            <div class="conclusion">
-                <p>本研究提出的基于注意力机制的图像识别方法在多个方面取得了显著进展：</p>
-                <ol>
-                    <li><strong>性能提升：</strong>在多个标准数据集上都取得了最先进的性能，证明了方法的有效性</li>
-                    <li><strong>计算效率：</strong>通过优化的网络结构设计，在提升性能的同时保持了较高的计算效率</li>
-                    <li><strong>泛化能力：</strong>方法在不同类型的视觉任务上都表现出良好的泛化能力</li>
-                    <li><strong>实用价值：</strong>该方法已在实际应用中得到验证，具有重要的实用价值</li>
-                </ol>
+        <!-- Experiments Section -->
+        <section class="section" id="experiments">
+            <h2 class="section-title">4. Experiments</h2>
+            <div class="section-content">
+                <p>We conduct comprehensive experiments on CIFAR-10, CIFAR-100, and ImageNet-128 to demonstrate the effectiveness of our joint rate-utility optimization approach. Our method consistently achieves superior rate-utility trade-offs compared to existing dataset distillation methods.</p>
                 
-                <h3>未来工作</h3>
-                <p>未来我们将继续探索以下方向：扩展到视频理解任务、结合多模态信息、优化模型压缩技术，以及在更多实际应用场景中验证方法的有效性。</p>
+                <h3 style="color: var(--primary-color); margin: 1.5rem 0 1rem 0;">4.1. Experimental Setup</h3>
+                <p>We evaluate our method across diverse bpc budgets, distillation losses, and backbone architectures. The experiments are designed to validate the generalizability and effectiveness of our approach under various conditions.</p>
+                
+                <h3 style="color: var(--primary-color); margin: 1.5rem 0 1rem 0;">4.2. Results</h3>
+                <p>Our method achieves up to 170× greater compression than standard distillation at comparable accuracy. The results demonstrate that our joint optimization approach consistently establishes new state-of-the-art rate-utility trade-offs across all tested datasets and configurations.</p>
+                
+                <div class="figure">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjlmOWY5Ii8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzMzMzMzMyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkV4cGVyaW1lbnRhbCBSZXN1bHRzIGFuZCBDb21wYXJpc29uczwvdGV4dD4KPC9zdmc+Cg==" alt="Experimental results">
+                    <figcaption class="figure-caption">Figure 3. Experimental results showing the superior performance of our method across different datasets and compression ratios.</figcaption>
+                </div>
             </div>
         </section>
 
-        <!-- BibTeX -->
-        <section class="section">
-            <h2 class="section-title">引用</h2>
-            <div class="bibtex">
-                <pre><code>@article{zhang2024attention,
-  title={深度学习在计算机视觉中的创新应用：基于注意力机制的图像识别新方法},
-  author={张三 and 李四 and 王五 and 赵六},
-  journal={CVPR},
-  year={2024},
-}</code></pre>
+        <!-- Conclusion Section -->
+        <section class="section" id="conclusion">
+            <h2 class="section-title">5. Conclusion</h2>
+            <div class="section-content">
+                <p>In this work, we have presented a novel joint rate-utility optimization method for dataset distillation that addresses the fundamental limitation of existing approaches that optimize rate and utility separately. Our hybrid parameterization framework successfully combines the advantages of both explicit and implicit representations while enabling end-to-end optimization of the rate-utility trade-off.</p>
+                
+                <p>The introduction of the bits per class (bpc) metric provides a standardized and fair way to compare different dataset distillation methods, accounting for all storage costs including samples, labels, and decoder parameters. Our comprehensive experimental evaluation demonstrates that the proposed method consistently achieves superior rate-utility trade-offs across multiple datasets and configurations.</p>
+                
+                <p>Future work could explore the application of our framework to other domains beyond image classification, such as natural language processing and speech recognition. Additionally, investigating more sophisticated entropy estimation techniques and exploring the integration with other compression paradigms could further improve the rate-utility trade-offs.</p>
             </div>
         </section>
 
-        <!-- 页脚 -->
-        <footer class="footer">
-            <p>&copy; 2024 论文作者团队. 保留所有权利.</p>
-            <div class="footer-links">
-                <a href="#">联系我们</a>
-                <a href="#">相关工作</a>
-                <a href="#">更多资源</a>
+        <!-- References Section -->
+        <section class="references" id="references">
+            <h2 class="section-title">References</h2>
+            <div class="section-content">
+                <div class="reference-item">
+                    <strong>[1]</strong> Wang, T., Zhu, J., Torralba, A., & Efros, A. A. (2018). Dataset distillation. <em>arXiv preprint arXiv:1811.10959</em>.
+                </div>
+                <div class="reference-item">
+                    <strong>[2]</strong> Ballé, J., Laparra, V., & Simoncelli, E. P. (2017). End-to-end optimized image compression. <em>ICLR</em>.
+                </div>
+                <div class="reference-item">
+                    <strong>[3]</strong> Zhao, B., Mopuri, K. R., & Bilen, H. (2020). Dataset condensation with gradient matching. <em>ICLR</em>.
+                </div>
+                <div class="reference-item">
+                    <strong>[4]</strong> Kaplan, J., McCandlish, S., Henighan, T., Brown, T. B., Chess, B., Child, R., ... & Amodei, D. (2020). Scaling laws for neural language models. <em>arXiv preprint arXiv:2001.08361</em>.
+                </div>
+                <div class="reference-item">
+                    <strong>[5]</strong> Brown, T., Mann, B., Ryder, N., Subbiah, M., Kaplan, J. D., Dhariwal, P., ... & Amodei, D. (2020). Language models are few-shot learners. <em>NeurIPS</em>.
+                </div>
+                <!-- Add more references as needed -->
             </div>
-        </footer>
-    </div>
+        </section>
+    </main>
 
-    <script src="script.js"></script>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <h3>Joint Rate-Utility Optimization for Dataset Distillation</h3>
+            <p><strong>Authors:</strong> Youneng Bao, Yiping Liu, Zhuo Chen, Yongsheng Liang, Mu Li, Kede Ma</p>
+            <p><strong>Conference:</strong> ICCV 2025</p>
+            <p><strong>Institutions:</strong> Harbin Institute of Technology, Shenzhen | Peng Cheng Laboratory | City University of Hong Kong</p>
+            <p style="margin-top: 1rem; font-size: 0.9rem;">© 2025 - This paper is open access under the Creative Commons Attribution License.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        body.setAttribute('data-theme', currentTheme);
+        themeToggle.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offsetTop = target.offsetTop - 100; // Account for fixed navbar
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Add loading animation to external links
+        document.querySelectorAll('.paper-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.getAttribute('href') === '#') {
+                    e.preventDefault();
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<span class="loading"></span> 加载中...';
+                    
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        alert('链接暂未配置，请在实际部署时添加真实链接。');
+                    }, 1000);
+                }
+            });
+        });
+
+        // Intersection Observer for section highlighting
+        const sections = document.querySelectorAll('.section');
+        const navLinks = document.querySelectorAll('.nav-links a');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${id}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, {
+            threshold: 0.3,
+            rootMargin: '-100px 0px -100px 0px'
+        });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+
+        // Add active class styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .nav-links a.active {
+                background: var(--secondary-color);
+                color: var(--white);
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
 </body>
 </html>
 
