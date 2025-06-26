@@ -74,12 +74,21 @@ body.dark-mode .carousel {
   color: #fff;
   border: none;
   border-radius: 50%;
-  width: 2.5rem;
-  height: 2.5rem;
-  font-size: 1.5rem;
-  margin: 0 1rem;
+  width: 48px;
+  height: 48px;
+  font-size: 2rem;
+  margin: 0 1.5rem;
   cursor: pointer;
-  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.carousel-btn svg {
+  width: 28px;
+  height: 28px;
+  display: block;
 }
 body.dark-mode .carousel-btn {
   background: var(--primary-color-dark);
@@ -122,22 +131,38 @@ window.addEventListener('DOMContentLoaded', function() {
     'imagemeow_full_page1.png'
   ];
   let idx = 0;
+  let timer = null;
   const imgEl = document.getElementById('carousel-img');
   const nameEl = document.getElementById('carousel-filename');
-  document.getElementById('carousel-prev').onclick = function() {
+  const prevBtn = document.getElementById('carousel-prev');
+  const nextBtn = document.getElementById('carousel-next');
+  function show(idx_) {
+    imgEl.src = carouselDir + imgFiles[idx_];
+    nameEl.textContent = imgFiles[idx_];
+  }
+  prevBtn.onclick = function() {
     idx = (idx - 1 + imgFiles.length) % imgFiles.length;
-    imgEl.src = carouselDir + imgFiles[idx];
-    nameEl.textContent = imgFiles[idx];
+    show(idx);
+    resetTimer();
   };
-  document.getElementById('carousel-next').onclick = function() {
+  nextBtn.onclick = function() {
     idx = (idx + 1) % imgFiles.length;
-    imgEl.src = carouselDir + imgFiles[idx];
-    nameEl.textContent = imgFiles[idx];
+    show(idx);
+    resetTimer();
   };
-  // 初始化
+  function autoPlay() {
+    timer = setInterval(() => {
+      idx = (idx + 1) % imgFiles.length;
+      show(idx);
+    }, 2500);
+  }
+  function resetTimer() {
+    if (timer) clearInterval(timer);
+    autoPlay();
+  }
   if(imgFiles.length) {
-    imgEl.src = carouselDir + imgFiles[0];
-    nameEl.textContent = imgFiles[0];
+    show(0);
+    autoPlay();
   }
 });
 </script>
@@ -191,7 +216,7 @@ window.addEventListener('DOMContentLoaded', function() {
         </header>
         <!-- 流程图展示 -->
 <div class="figure" style="margin:2rem 0; text-align:center;">
-  <img src="data/img/figure.png" alt="Flowchart" style="max-width: 480px; width: 100%; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+  <img src="data/img/process.png" alt="Flowchart" style="max-width:960px; width: 100%; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
   <figcaption class="figure-caption">Figure. Flowchart of the proposed method.</figcaption>
 </div>
         <!-- Abstract Section -->
@@ -208,9 +233,13 @@ window.addEventListener('DOMContentLoaded', function() {
   <h2 class="section-title">Distilled Image</h2>
   <div class="carousel">
     <div class="carousel-container">
-      <button class="carousel-btn" id="carousel-prev">&#8592;</button>
+      <button class="carousel-btn" id="carousel-prev" aria-label="Previous image">
+        <svg viewBox="0 0 24 24"><path d="M15.5 19l-7-7 7-7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
       <img id="carousel-img" class="carousel-img" src="" alt="Distilled Image">
-      <button class="carousel-btn" id="carousel-next">&#8594;</button>
+      <button class="carousel-btn" id="carousel-next" aria-label="Next image">
+        <svg viewBox="0 0 24 24"><path d="M8.5 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
     <div class="carousel-filename" id="carousel-filename"></div>
   </div>

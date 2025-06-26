@@ -71,3 +71,49 @@ const observer = new IntersectionObserver((entries) => {
 sections.forEach(section => {
     observer.observe(section);
 });
+// 轮播图逻辑独立
+window.addEventListener('DOMContentLoaded', function() {
+  const carouselDir = 'data/img/distilled_img/';
+  const imgFiles = [
+    'imagenette_full_page1.png',
+    'imagewoof_full_page1.png',
+    'imageyellow_full_page1.png',
+    'imagefruit_full_page1.png',
+    'imagesquawk_full_page1.png',
+    'imagemeow_full_page1.png'
+  ];
+  let idx = 0;
+  let timer = null;
+  const imgEl = document.getElementById('carousel-img');
+  const nameEl = document.getElementById('carousel-filename');
+  const prevBtn = document.getElementById('carousel-prev');
+  const nextBtn = document.getElementById('carousel-next');
+  function show(idx_) {
+    imgEl.src = carouselDir + imgFiles[idx_];
+    nameEl.textContent = imgFiles[idx_];
+  }
+  prevBtn.onclick = function() {
+    idx = (idx - 1 + imgFiles.length) % imgFiles.length;
+    show(idx);
+    resetTimer();
+  };
+  nextBtn.onclick = function() {
+    idx = (idx + 1) % imgFiles.length;
+    show(idx);
+    resetTimer();
+  };
+  function autoPlay() {
+    timer = setInterval(() => {
+      idx = (idx + 1) % imgFiles.length;
+      show(idx);
+    }, 2500);
+  }
+  function resetTimer() {
+    if (timer) clearInterval(timer);
+    autoPlay();
+  }
+  if(imgFiles.length) {
+    show(0);
+    autoPlay();
+  }
+});
