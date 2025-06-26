@@ -16,6 +16,131 @@
         };
     </script>
     <link rel="stylesheet" href="data/style.css">
+    <style>
+:root {
+  --primary-color: #2563eb; /* 蓝色主色 */
+  --primary-color-dark: #90cdf4; /* 深色模式下主色 */
+  --background-light: #fff;
+  --background-dark: #181a1b;
+  --text-light: #222;
+  --text-dark: #e5e7eb;
+}
+body {
+  background: var(--background-light);
+  color: var(--text-light);
+  transition: background 0.3s, color 0.3s;
+}
+body.dark-mode {
+  background: var(--background-dark);
+  color: var(--text-dark);
+}
+.section-title, .paper-title {
+  color: var(--primary-color);
+  transition: color 0.3s;
+}
+body.dark-mode .section-title, body.dark-mode .paper-title {
+  color: var(--primary-color-dark);
+}
+
+/* 隐藏部分内容 */
+#introduction, #method, #conclusion, #references {
+  display: none !important;
+}
+
+/* 轮播图样式 */
+.carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin: 2rem 0;
+  width: 100%;
+  max-width: 100vw;
+  background: var(--background-light);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 1.5rem 0;
+  transition: background 0.3s;
+}
+body.dark-mode .carousel {
+  background: var(--background-dark);
+}
+.carousel-container {
+  display: flex;
+  align-items: center;
+}
+.carousel-btn {
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.5rem;
+  margin: 0 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+body.dark-mode .carousel-btn {
+  background: var(--primary-color-dark);
+  color: #222;
+}
+.carousel-img {
+  width: 90vw;
+  max-width: 90%;
+  max-height: 70vh;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  background: #fff;
+  display: block;
+  margin: 0 auto;
+}
+.carousel-filename {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  color: var(--primary-color);
+}
+body.dark-mode .carousel-filename {
+  color: var(--primary-color-dark);
+}
+</style>
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+  // 主题切换
+  const themeToggle = document.getElementById('themeToggle');
+  themeToggle && themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+  });
+  // 轮播图逻辑
+  const carouselDir = 'data/img/distilled_img/';
+  const imgFiles = [
+    'imagenette_full_page1.png',
+    'imagewoof_full_page1.png',
+    'imageyellow_full_page1.png',
+    'imagefruit_full_page1.png',
+    'imagesquawk_full_page1.png',
+    'imagemeow_full_page1.png'
+  ];
+  let idx = 0;
+  const imgEl = document.getElementById('carousel-img');
+  const nameEl = document.getElementById('carousel-filename');
+  document.getElementById('carousel-prev').onclick = function() {
+    idx = (idx - 1 + imgFiles.length) % imgFiles.length;
+    imgEl.src = carouselDir + imgFiles[idx];
+    nameEl.textContent = imgFiles[idx];
+  };
+  document.getElementById('carousel-next').onclick = function() {
+    idx = (idx + 1) % imgFiles.length;
+    imgEl.src = carouselDir + imgFiles[idx];
+    nameEl.textContent = imgFiles[idx];
+  };
+  // 初始化
+  if(imgFiles.length) {
+    imgEl.src = carouselDir + imgFiles[0];
+    nameEl.textContent = imgFiles[0];
+  }
+});
+</script>
 </head>
 <body>
     <!-- Fixed Navigation Bar -->
@@ -64,6 +189,11 @@
                 <a href="#" class="paper-link">📊 Dataset</a>
             </div>
         </header>
+        <!-- 流程图展示 -->
+<div class="figure" style="margin:2rem 0; text-align:center;">
+  <img src="data/img/figure.png" alt="Flowchart" style="max-width: 480px; width: 100%; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+  <figcaption class="figure-caption">Figure. Flowchart of the proposed method.</figcaption>
+</div>
         <!-- Abstract Section -->
         <section class="section" id="abstract">
             <h2 class="section-title">Abstract</h2>
@@ -73,6 +203,18 @@
                 <p>To enable fair, cross-method comparisons, we introduce bits per class (bpc), a precise storage metric that accounts for sample, label, and decoder costs. On CIFAR-10, CIFAR-100, and ImageNet-128, our method achieves up to 170× greater compression than standard distillation at comparable accuracy. Across diverse bpc budgets, distillation losses, and backbone architectures, our approach consistently establishes new state-of-the-art rate-utility trade-offs.</p>
             </div>
         </section>
+        <!-- Distilled Image Carousel -->
+<section class="section" id="distilled-image">
+  <h2 class="section-title">Distilled Image</h2>
+  <div class="carousel">
+    <div class="carousel-container">
+      <button class="carousel-btn" id="carousel-prev">&#8592;</button>
+      <img id="carousel-img" class="carousel-img" src="" alt="Distilled Image">
+      <button class="carousel-btn" id="carousel-next">&#8594;</button>
+    </div>
+    <div class="carousel-filename" id="carousel-filename"></div>
+  </div>
+</section>
         <!-- Introduction Section -->
         <section class="section" id="introduction">
             <h2 class="section-title">1. Introduction</h2>
