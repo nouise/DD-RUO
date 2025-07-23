@@ -1,374 +1,318 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dataset Distillation as Data Compression: A Rate-Utility Perspective</title>
-    <!-- MathJax for LaTeX formula support -->
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']]
-            }
-        };
-    </script>
-    <link rel="stylesheet" href="data/style.css">
-    <style>
-:root {
-  --primary-color: #2563eb; /* 蓝色主色 */
-  --primary-color-dark: #90cdf4; /* 深色模式下主色 */
-  --background-light: #fff;
-  --background-dark: #181a1b;
-  --text-light: #222;
-  --text-dark: #e5e7eb;
-}
-body {
-  background: var(--background-light);
-  color: var(--text-light);
-  transition: background 0.3s, color 0.3s;
-}
-body.dark-mode {
-  background: var(--background-dark);
-  color: var(--text-dark);
-}
-.section-title, .paper-title {
-  color: var(--primary-color);
-  transition: color 0.3s;
-}
-body.dark-mode .section-title, body.dark-mode .paper-title {
-  color: var(--primary-color-dark);
-}
+  <meta charset="utf-8">
+  <meta name="description"
+        content="we propose a joint rate-utility optimization method for dataset distillation. We parameterize synthetic samples as optimizable latent codes decoded by extremely lightweight networks. We estimate the Shannon entropy of quantized latents as the rate measure and plug any existing distillation loss as the utility measure, trading them off via a Lagrange multiplier.">
+  <meta name="keywords" content="Dataset distillation, Rate-Utility, Joint optimization">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DD-RUO</title>
 
-/* 隐藏部分内容 */
-#introduction, #method, #conclusion, #references {
-  display: none !important;
-}
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
 
-/* 轮播图样式 */
-.carousel {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  margin: 2rem 0;
-  width: 100%;
-  max-width: 100vw;
-  background: var(--background-light);
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  padding: 1.5rem 0;
-  transition: background 0.3s;
-}
-body.dark-mode .carousel {
-  background: var(--background-dark);
-}
-.carousel-container {
-  display: flex;
-  align-items: center;
-}
-.carousel-btn {
-  background: var(--primary-color);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  font-size: 2rem;
-  margin: 0 1.5rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s, color 0.2s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-}
-.carousel-btn svg {
-  width: 28px;
-  height: 28px;
-  display: block;
-}
-body.dark-mode .carousel-btn {
-  background: var(--primary-color-dark);
-  color: #222;
-}
-.carousel-img {
-  width: 90vw;
-  max-width: 90%;
-  max-height: 70vh;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  background: #fff;
-  display: block;
-  margin: 0 auto;
-}
-.carousel-filename {
-  margin-top: 0.5rem;
-  font-size: 1rem;
-  color: var(--primary-color);
-}
-body.dark-mode .carousel-filename {
-  color: var(--primary-color-dark);
-}
-</style>
-<script>
-window.addEventListener('DOMContentLoaded', function() {
-  // 主题切换
-  const themeToggle = document.getElementById('themeToggle');
-  themeToggle && themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-  });
-  // 轮播图逻辑
-  const carouselDir = 'data/img/distilled_img/';
-  const imgFiles = [
-    'imagenette_full_page1.png',
-    'imagewoof_full_page1.png',
-    'imageyellow_full_page1.png',
-    'imagefruit_full_page1.png',
-    'imagesquawk_full_page1.png',
-    'imagemeow_full_page1.png'
-  ];
-  let idx = 0;
-  let timer = null;
-  const imgEl = document.getElementById('carousel-img');
-  const nameEl = document.getElementById('carousel-filename');
-  const prevBtn = document.getElementById('carousel-prev');
-  const nextBtn = document.getElementById('carousel-next');
-  function show(idx_) {
-    imgEl.src = carouselDir + imgFiles[idx_];
-    nameEl.textContent = imgFiles[idx_];
-  }
-  prevBtn.onclick = function() {
-    idx = (idx - 1 + imgFiles.length) % imgFiles.length;
-    show(idx);
-    resetTimer();
-  };
-  nextBtn.onclick = function() {
-    idx = (idx + 1) % imgFiles.length;
-    show(idx);
-    resetTimer();
-  };
-  function autoPlay() {
-    timer = setInterval(() => {
-      idx = (idx + 1) % imgFiles.length;
-      show(idx);
-    }, 2500);
-  }
-  function resetTimer() {
-    if (timer) clearInterval(timer);
-    autoPlay();
-  }
-  if(imgFiles.length) {
-    show(0);
-    autoPlay();
-  }
-});
-</script>
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
 </head>
 <body>
-    <!-- Fixed Navigation Bar -->
-    <nav class="navbar" id="navbar">
-        <div class="nav-container">
-            <div class="nav-title">Meta-Hitsz</div>
-            <ul class="nav-links">
-                <li><a href="#abstract">Abstract</a></li>
-                <li><a href="#introduction">Introduction</a></li>
-                <li><a href="#method">Methodology</a></li>
-                <li><a href="#experiments">Experiments</a></li>
-                <li><a href="#conclusion">Conclusion</a></li>
-                <li><a href="#references">References</a></li>
-            </ul>
-            <button class="theme-toggle" id="themeToggle" title="Toggle theme">
-                🌙
-            </button>
-        </div>
-    </nav>
-    <!-- GitHub Corner -->
-    <a href="#" class="github-corner" aria-label="View source on GitHub" style="display: none;">
-        <img src="data/img/github-corner.svg" alt="GitHub Corner" width="80" height="80">
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
     </a>
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Paper Header -->
-        <header class="paper-header">
-            <h1 class="paper-title">Dataset Distillation as Data Compression: A Rate-Utility Perspective</h1>
-            <div class="authors">
-                <a class="author" href="https://scholar.google.com/citations?user=lKD67zcAAAAJ&hl=en" title="younebao@cityu.edu.hk" target="_blank">Youneng Bao<sup>1,3*</sup></a>
-                <a class="author" href="https://openreview.net/profile?id=~Yiping_Liu4" title="yipingliu@stu.hit.edu.cn" target="_blank">Yiping Liu<sup>3*</sup></a>
-                <a class="author" href="http://chenzhuo.info/" title="chenzhuo.zoom@gmail.com" target="_blank">Zhuo Chen<sup>2</sup></a>
-                <a class="author" href="https://scholar.google.com/citations?user=aOEk854AAAAJ&hl=zh-CN" title="liangys@hit.edu.cn" target="_blank">Yongsheng Liang<sup>1</sup></a>
-                <a class="author" href="https://faculty.hitsz.edu.cn/limu" title="limu2022@hit.edu.cn" target="_blank">Mu Li<sup>1✉</sup></a>
-                <a class="author" href="https://kedema.org/" title="kede.ma@cityu.edu.hk" target="_blank">Kede Ma<sup>3✉</sup></a>
-            </div>
-            <div class="affiliations">
-                <p><sup>1</sup>Harbin Institute of Technology, Shenzhen</p>
-                <p><sup>2</sup>Peng Cheng Laboratory</p>
-                <p><sup>3</sup>City University of Hong Kong</p>
-            </div>
-            <div class="paper-links">
-                <a href="#" class="paper-link">📄 arXiv</a>
-                <a href="#" class="paper-link">🏛️ ICCV 2025</a>
-                <a href="#" class="paper-link">💻 Code</a>
-                <a href="#" class="paper-link">📊 Dataset</a>
-            </div>
-        </header>
-        <!-- 流程图展示 -->
-<div class="figure" style="margin:2rem 0; text-align:center;">
-  <img src="data/img/process.png" alt="Flowchart" style="max-width:960px; width: 100%; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-  <figcaption class="figure-caption">Figure. Flowchart of the proposed method.</figcaption>
-</div>
-        <!-- Abstract Section -->
-        <section class="section" id="abstract">
-            <h2 class="section-title">Abstract</h2>
-            <div class="section-content">
-                <p>Driven by the 'scale-is-everything' paradigm, modern machine learning increasingly demands ever-larger datasets and models, yielding prohibitive computational and storage requirements. Dataset distillation mitigates this by compressing a full dataset into a small set of synthetic samples, preserving its original utility. Yet, existing methods either optimize performance under a fixed storage budget or remove sample redundancy, without jointly balancing both objectives, thus precluding Pareto-optimal trade-offs.</p>
-                <p>In this work, we propose a joint Rate-Utility Optimization (RUO) method for dataset distillation. Specifically, we parameterize synthetic samples as optimizable latent codes decoded by lightweight networks. Such a hybrid parameterization subsumes all prior explicit and implicit representations for synthetic datasets. We estimate the entropy of quantized latents as the rate measure and plug any existing distillation loss as the utility measure, trading them off via a Lagrange multiplier.</p>
-                <p>To enable fair, cross-method comparisons, we introduce bits per class (bpc), a precise storage metric that accounts for sample, label, and decoder costs. On CIFAR-10, CIFAR-100, and ImageNet-128, our method achieves up to 170× greater compression than standard distillation at comparable accuracy. Across diverse bpc budgets, distillation losses, and backbone architectures, our approach consistently establishes new state-of-the-art rate-utility trade-offs.</p>
-            </div>
-        </section>
-        <!-- Distilled Image Carousel -->
-<section class="section" id="distilled-image">
-  <h2 class="section-title">Distilled Image</h2>
-  <div class="carousel">
-    <div class="carousel-container">
-      <button class="carousel-btn" id="carousel-prev" aria-label="Previous image">
-        <svg viewBox="0 0 24 24"><path d="M15.5 19l-7-7 7-7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <img id="carousel-img" class="carousel-img" src="" alt="Distilled Image">
-      <button class="carousel-btn" id="carousel-next" aria-label="Next image">
-        <svg viewBox="0 0 24 24"><path d="M8.5 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="https://github.com/nouise">
+      <span class="icon">
+          <i class="fas fa-home"></i>
+      </span>
+      </a>
+
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More Research
+        </a>
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="https://github.com/nouise">
+            is comming
+          </a>
+        </div>
+      </div>
     </div>
-    <div class="carousel-filename" id="carousel-filename"></div>
+
+  </div>
+</nav>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Dataset Distillation as Data Compression: A Rate-Utility Perspective</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a class="author" href="https://scholar.google.com/citations?user=lKD67zcAAAAJ&hl=en" title="younebao@cityu.edu.hk" target="_blank">Youneng Bao<sup>1,3*</sup></a>,
+            </span>
+            <span class="author-block">
+              <a class="author" href="https://openreview.net/profile?id=~Yiping_Liu4" title="yipingliu@stu.hit.edu.cn" target="_blank">Yiping Liu<sup>3*</sup></a>,
+            </span>
+            <span class="author-block">
+              <a class="author" href="http://chenzhuo.info/" title="chenzhuo.zoom@gmail.com" target="_blank">Zhuo Chen<sup>2</sup></a>,
+            </span>
+            <span class="author-block">
+              <a class="author" href="https://scholar.google.com/citations?user=aOEk854AAAAJ&hl=zh-CN" title="liangys@hit.edu.cn" target="_blank">Yongsheng Liang<sup>1</sup></a>,
+            </span>
+            <span class="author-block">
+              <a class="author" href="https://faculty.hitsz.edu.cn/limu" title="limu2022@hit.edu.cn" target="_blank">Mu Li<sup>1✉</sup></a>,
+            </span>
+            <span class="author-block">
+              <a class="author" href="https://kedema.org/" title="kede.ma@cityu.edu.hk" target="_blank">Kede Ma<sup>3✉</sup></a>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>Harbin Institute of Technology, Shenzhen</span>
+            <span class="author-block"><sup>2</sup>Peng Cheng Laboratory</span>
+            <span class="author-block"><sup>3</sup>City University of Hong Kong</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href="https://arxiv.org/pdf/2011.12948"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2011.12948"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Video Link. -->
+              <!-- <span class="link-block">
+                <a href="https://www.youtube.com/watch?v=MrKrnHhk8IA"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span> -->
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/nouise/DD-RUO"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+              <!-- Dataset Link. -->
+              <!-- <span class="link-block">
+                <a href="https://github.com/google/nerfies/releases/tag/0.1"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="far fa-images"></i>
+                  </span>
+                  <span>Data</span>
+                  </a> -->
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
-        <!-- Introduction Section -->
-        <section class="section" id="introduction">
-            <h2 class="section-title">1. Introduction</h2>
-            <div class="section-content">
-                <p>The rapid advances in machine learning have been driven by the 'scale-is-everything' paradigm, in which ever-larger models trained on ever-more extensive datasets yield progressively better performance across various computational prediction tasks. However, this scaling trend incurs steep computational, storage, and environmental costs, posing a significant barrier to sustainable and accessible research and deployment.</p>
-                <div class="figure">
-                    <img src="data/img/imgeNet_nette.png" alt="Rate-utility curves">
-                    <figcaption class="figure-caption">Figure 1. The Rate-utility curves of different dataset distillation methods on ImageNet-subset Nette. Our method achieves a better trade-off between rate and utility compared to existing methods. BPC is defined as the bits per class, directly measuring the storage cost of the distilled dataset.</figcaption>
-                </div>
-                <p>Dataset distillation (DD) addresses these challenges by learning a compact, synthetic dataset that enables rapid model prototyping, accelerated model training, and efficient hyperparameter tuning, while lowering compute, storage, and energy requirements. At the core of DD lies a trade-off between rate (i.e., the storage footprint of the synthetic dataset) and utility (i.e., the performance of models trained on distilled data).</p>
-                <p>Despite impressive progress, existing DD methods optimize rate and utility separately, precluding Pareto-optimal trade-offs. Inspired by end-to-end rate-distortion optimization of learned image compression, we describe a joint rate-utility optimization method for DD. Our approach parametrizes synthetic samples as multiscale grids of learnable latent codes, decoded by small learnable networks, which generalizes all existing explicit and implicit distilled-dataset representations.</p>
-                <p><strong>Key Contributions:</strong></p>
-                <ul>
-                    <li>A joint rate-utility optimization method for DD that retains full compatibility with existing distillation losses</li>
-                    <li>A hybrid parameterization of synthetic samples that subsumes prior synthetic dataset representations</li>
-                    <li>A bpc metric for enabling standardized and fair rate-utility comparisons across various DD methods</li>
-                    <li>An experimental demonstration on CIFAR-10, CIFAR-100, and ImageNet-128 that our method consistently establishes new state-of-the-art rate-utility trade-offs</li>
-                </ul>
-            </div>
-        </section>
-        <!-- Related Work Section -->
-        <section class="section" id="related-work">
-            <h2 class="section-title">2. Related Work</h2>
-            <div class="section-content">
-                <p>In this section, we review prior efforts in DD and data compression. Our method bridges the conceptual and computational gap between these two fields, allowing principled exploration of Pareto-optimal trade-offs between rate and utility in DD.</p>
-                <h3 style="color: var(--primary-color); margin: 1.5rem 0 1rem 0;">2.1. Dataset Distillation</h3>
-                <p>Wang et al. first formulated DD as a bilevel optimization problem, which generalizes coreset selection. The reliance of BPTT over the entire inner-loop trajectory, incurring prohibitive computation, high memory usage, and unstable meta-gradients. To reduce this burden, several meta-gradient estimation strategies have been proposed.</p>
-                <p>Recent efforts have been put to address the scalability of DD methods to large, high-resolution datasets, typically via the decoupling trick in bilevel optimization. Close to our work is the so-called factorized DD, which factorizes the synthetic dataset with a combination of codes and decoders, in an attempt to improve compression efficiency.</p>
-                <h3 style="color: var(--primary-color); margin: 1.5rem 0 1rem 0;">2.2. Data Compression</h3>
-                <p>Data compression is broadly categorized into lossless and lossy compression paradigms. Neural compression, pioneered by recent works, employs neural networks to directly learn optimal transform strategies. Both dataset distillation and data compression fundamentally pursue minimum-entropy representations to eliminate information redundancy.</p>
-            </div>
-        </section>
-        <!-- Method Section -->
-        <section class="section" id="method">
-            <h2 class="section-title">3. Methodology</h2>
-            <div class="section-content">
-                <h3 style="color: var(--primary-color); margin: 1.5rem 0 1rem 0;">3.1. Problem Formulation</h3>
-                <p>Dataset distillation can be modeled as a bi-level optimization problem. Given an original dataset $T := (X_T, Y_T) = \{(x_i, y_i)\}_{i=1}^N$ consisting of $N$ data points $x_i$ and corresponding labels $y_i$, the goal of dataset distillation is to find a smaller, synthetic dataset $S := (X_S, Y_S) = \{(\tilde{x}_j, \tilde{y}_j)\}_{j=1}^M$, and $M \ll N$, such that a model trained on $S$ performs comparably to a model trained on $T$.</p>
-                <p>More formally, let $f(x; \theta)$ represent a model parameterized by $\theta$. The objective of dataset distillation is formulated as follows:</p>
-                <div style="text-align: center; margin: 2rem 0;">
-                    $$\min_S \mathbb{E}_{(x,y) \sim p(x,y)}[\ell(f_{\theta_S}(x), y)]$$
-                    $$\text{where } \theta_S = \arg\min_\theta \frac{1}{M} \sum_{(\tilde{x}_j, \tilde{y}_j) \in S} \ell(f_\theta(\tilde{x}_j), \tilde{y}_j)$$
-                </div>
-                <h3 style="color: var(--primary-color); margin: 1.5rem 0 1rem 0;">3.2. Hybrid Parameterization Framework</h3>
-                <p>We propose a hybrid framework that combines explicit and implicit parameterization by jointly learning both the latent feature $Z$ and transformation function $F_\psi$, while storing parameters of both components. The total rate consists of explicit and implicit components:</p>
-                <div style="text-align: center; margin: 2rem 0;">
-                    $$R_{total} = R_{ex} + R_{im}$$
-                </div>
-                <p>where $R_{ex}$ and $R_{im}$ represent the explicit part and implicit part of the rate, respectively.</p>
-                <div class="figure">
-                    <img src="data/img/figure2.svg" alt="Framework comparison">
-                    <figcaption class="figure-caption">Figure 2. Comparison of dataset distillation frameworks. (a) Explicit parameterization. (b) Implicit parameterization. (c) Our framework combines explicit and implicit parametrization and generates compact representations by directly optimizing bitrate of synthetic datasets.</figcaption>
-                </div>
-            </div>
-        </section>
-        <!-- Experiments Section -->
-        <section class="section" id="experiments">
-            <h2 class="section-title">4. Experiments</h2>
-            <div class="section-content">
-                <p>We conduct comprehensive experiments on CIFAR-10, CIFAR-100, and ImageNet-128 to demonstrate the effectiveness of our joint rate-utility optimization approach. Our method consistently achieves superior rate-utility trade-offs compared to existing dataset distillation methods.</p>
-                <h3 style="color: var(--primary-color); margin: 1.5rem 0 1rem 0;">4.1. Experimental Setup</h3>
-                <p>We evaluate our method across diverse bpc budgets, distillation losses, and backbone architectures. The experiments are designed to validate the generalizability and effectiveness of our approach under various conditions.</p>
-                <h3 style="color: var(--primary-color); margin: 1.5rem 0 1rem 0;">4.2. Results</h3>
-                <p>Our method achieves up to 170× greater compression than standard distillation at comparable accuracy. The results demonstrate that our joint optimization approach consistently establishes new state-of-the-art rate-utility trade-offs across all tested datasets and configurations.</p>
-                <div class="figure">
-                    <img src="data/img/imgeNet_nette.png" alt="Experimental results">
-                    <figcaption class="figure-caption">Figure 3. Experimental results showing the superior performance of our method across different datasets and compression ratios.</figcaption>
-                </div>
-            </div>
-        </section>
-        <!-- Conclusion Section -->
-        <section class="section" id="conclusion">
-            <h2 class="section-title">5. Conclusion</h2>
-            <div class="section-content">
-                <p>In this work, we have presented a novel joint rate-utility optimization method for dataset distillation that addresses the fundamental limitation of existing approaches that optimize rate and utility separately. Our hybrid parameterization framework successfully combines the advantages of both explicit and implicit representations while enabling end-to-end optimization of the rate-utility trade-off.</p>
-                <p>The introduction of the bits per class (bpc) metric provides a standardized and fair way to compare different dataset distillation methods, accounting for all storage costs including samples, labels, and decoder parameters. Our comprehensive experimental evaluation demonstrates that the proposed method consistently achieves superior rate-utility trade-offs across multiple datasets and configurations.</p>
-                <p>Future work could explore the application of our framework to other domains beyond image classification, such as natural language processing and speech recognition. Additionally, investigating more sophisticated entropy estimation techniques and exploring the integration with other compression paradigms could further improve the rate-utility trade-offs.</p>
-            </div>
-        </section>
-        <!-- BibTeX Citation Box -->
-<div class="bibtex-box" style="margin: 2rem 0; padding: 1rem; background: #f8f9fa; border-radius: 8px; border: 1px solid #e0e0e0;">
-    <label for="bibtex-citation" style="font-weight: bold; display: block; margin-bottom: 0.5rem;">BibTeX Citation</label>
-    <textarea id="bibtex-citation" style="width: 100%; min-height: 120px; font-family: 'Fira Mono', 'Consolas', monospace; font-size: 0.95rem; padding: 0.5rem; border-radius: 4px; border: 1px solid #ccc; background: #fff; resize: vertical;" readonly>
-@article{bao2025ruo,
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video id="teaser" autoplay muted loop playsinline controls width="118%" style="margin: 0 -9%; max-width: 1600px;">
+        <source src="./static/results/video/pdf_pairs_video.mp4" type="video/mp4">
+        <p>Your browser does not support the video element.</p>
+      </video>
+      <h2 class="subtitle has-text-centered">
+        Visualization of our synthetic samples
+      </h2>
+    </div>
+  </div>
+</section>
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="container">
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item item-imagefruit">
+          <img src="./static/results/full_images/imagefruit_full_page1.png" alt="ImageFruit Results" width="100%" style="max-width: 800px;" />
+        </div>
+        <div class="item item-imagemeow">
+          <img src="./static/results/full_images/imagemeow_full_page1.png" alt="ImageMeow Results" width="100%" style="max-width: 800px;" />
+        </div>
+        <div class="item item-imagenette">
+          <img src="./static/results/full_images/imagenette_full_page1.png" alt="ImageNette Results" width="100%" style="max-width: 800px;" />
+        </div>
+        <div class="item item-imagesquawk">
+          <img src="./static/results/full_images/imagesquawk_full_page1.png" alt="ImageSquawk Results" width="100%" style="max-width: 800px;" />
+        </div>
+        <div class="item item-imagewoof">
+          <img src="./static/results/full_images/imagewoof_full_page1.png" alt="ImageWoof Results" width="100%" style="max-width: 800px;" />
+        </div>
+        <div class="item item-imageyellow">
+          <img src="./static/results/full_images/imageyellow_full_page1.png" alt="ImageYellow Results" width="100%" style="max-width: 800px;" />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Driven by the <em>“scale-is-everything”</em> paradigm, modern machine learning increasingly demands ever-larger datasets and models, yielding prohibitive computational and storage requirements. Dataset distillation mitigates this by compressing an original dataset into a small set of synthetic samples, while preserving its full utility. Yet, existing methods either maximize performance under fixed storage budgets or pursue suitable synthetic data representations for redundancy removal, without jointly optimizing both objectives.
+            In this work, we propose a joint rate-utility optimization method for dataset distillation. We parameterize synthetic samples as optimizable latent codes decoded by extremely lightweight networks. We estimate the Shannon entropy of quantized latents as the rate measure and plug any existing distillation loss as the utility measure, trading them off via a Lagrange multiplier.
+            To enable fair, cross-method comparisons, we introduce bits per class (bpc), a precise storage metric that accounts for sample, label, and decoder parameter costs. On CIFAR-10, CIFAR-100, and ImageNet-128, our method achieves up to 170&times greater compression than standard distillation at comparable accuracy. Across diverse bpc budgets, distillation losses, and backbone architectures, our approach consistently establishes better rate-utility trade-offs.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+    <!-- system png. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+      <h2 class="title is-3">System Overview</h2>
+      <div class="publication-image">
+        <img src="./static/results/full_images/system_page1.png" alt="Overview of our proposed method" style="max-width:100%; height:auto;" />
+      </div>
+      </div>
+    </div>
+    <!-- visualization png. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+      <h2 class="title is-3">Visualization of synthetic samples</h2>
+      <div class="publication-image">
+        <img src="./static/results/full_images/tm_imagenette_main_page1.png" alt="Visualization of synthetic samples" style="max-width:100%; height:auto;" />
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column">
+        <div class="content has-text-centered">
+          <h2 class="title is-3">Rate-Utility curve</h2>
+          <p>
+            Comparison of the rate-utility curves on the Nette subset of ImageNet, CIFAR-10 and CIFAR-100 with the rate axis displayed on a logarithmic scale.
+          </p>
+        </div>
+        <div class="columns">
+          <div class="column has-text-centered">
+            <img src="./static/results/full_images/RU-imagenet_page1.png" alt="Rate-Utility Curve: ImageNet" style="width:100%; height:auto;" />
+            <p>ImageNet</p>
+          </div>
+          <div class="column has-text-centered">
+            <img src="./static/results/full_images/RU-cifar10_page1.png" alt="Rate-Utility Curve: CIFAR-10" style="width:100%; height:auto;" />
+            <p>CIFAR-10</p>
+          </div>
+          <div class="column has-text-centered">
+            <img src="./static/results/full_images/RU-cifar100_page1.png" alt="Rate-Utility Curve: CIFAR-100" style="width:100%; height:auto;" />
+            <p>CIFAR-100</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{bao2025ruo,
   author    = {Youneng Bao and Yiping Liu and Zhuo Chen and Yongsheng Liang and Mu Li and Kede Ma},
   title     = {Dataset Distillation as Data Compression: A Rate-Utility Perspective},
   journal   = {ICCV},
   year      = {2025},
-}
-    </textarea>
-    <small style="color: #888;">Copy and paste this BibTeX entry to cite our paper.</small>
-</div>
-        <!-- References Section -->
-        <section class="references" id="references">
-            <h2 class="section-title">References</h2>
-            <div class="section-content">
-                <div class="reference-item">
-                    <strong>[1]</strong> Wang, T., Zhu, J., Torralba, A., & Efros, A. A. (2018). Dataset distillation. <em>arXiv preprint arXiv:1811.10959</em>.
-                </div>
-                <div class="reference-item">
-                    <strong>[2]</strong> Ballé, J., Laparra, V., & Simoncelli, E. P. (2017). End-to-end optimized image compression. <em>ICLR</em>.
-                </div>
-                <div class="reference-item">
-                    <strong>[3]</strong> Zhao, B., Mopuri, K. R., & Bilen, H. (2020). Dataset condensation with gradient matching. <em>ICLR</em>.
-                </div>
-                <div class="reference-item">
-                    <strong>[4]</strong> Kaplan, J., McCandlish, S., Henighan, T., Brown, T. B., Chess, B., Child, R., ... & Amodei, D. (2020). Scaling laws for neural language models. <em>arXiv preprint arXiv:2001.08361</em>.
-                </div>
-                <div class="reference-item">
-                    <strong>[5]</strong> Brown, T., Mann, B., Ryder, N., Subbiah, M., Kaplan, J. D., Dhariwal, P., ... & Amodei, D. (2020). Language models are few-shot learners. <em>NeurIPS</em>.
-                </div>
-            </div>
-        </section>
-    </main>
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <h3>Dataset Distillation as Data Compression: A Rate-Utility Perspective</h3>
-            <p><strong>Authors:</strong> Youneng Bao, Yiping Liu, Zhuo Chen, Yongsheng Liang, Mu Li, Kede Ma</p>
-            <p><strong>Conference:</strong> ICCV 2025</p>
-            <p><strong>Institutions:</strong> Harbin Institute of Technology, Shenzhen | Peng Cheng Laboratory | City University of Hong Kong</p>
-            <p style="margin-top: 1rem; font-size: 0.9rem;">© 2025 - This paper is open access under the Creative Commons Attribution License.</p>
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link"
+         href="./static/results/ruo.pdf"></a>
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <a class="icon-link" href="https://github.com/nouise/DD-RUO" class="external-link" disabled>
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
         </div>
-    </footer>
-    <script src="data/main.js"></script>
+      </div>
+    </div>
+  </div>
+</footer>
+
 </body>
 </html>
-
