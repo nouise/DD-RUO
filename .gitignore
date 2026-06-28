@@ -1,2 +1,65 @@
-.DS_store
-.idea
+# Local agent / editor metadata
+.agents/
+.codex/
+.vscode/
+.idea/
+
+# Python caches
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+nohup.out
+wandb/
+
+# Generated results / outputs (smoke tests, training runs)
+results/
+*/results/
+*.png
+
+# Temporary artifacts
+*.tmp
+*.bak
+
+# Model weights / checkpoints (kept as empty placeholder dirs; download from HuggingFace)
+*.pt
+*.pth
+*.ckpt
+
+# entropy_codec generated bitstreams / decoded outputs / analysis
+entropy_codec/bitstream_out/
+entropy_codec/decoded_out/
+entropy_codec/analysis_out/
+
+# Weights, logs & launch scripts — distributed via ModelScope (yiping03/dd-ruo0), not in repo
+checkpoints/
+checkpoints_release/
+
+# Local experiment data snapshot (not a stable interface)
+last_dm.json
+
+# Local-only working notes (not for release)
+DEADCODE_NOTES.md
+CLAUDE.md
+
+# Internal ModelScope upload helper (not for release)
+upload_modelscope.py
+
+# --- Website assets served by GitHub Pages from docs/ — never ignore ---
+!docs/
+!docs/**
